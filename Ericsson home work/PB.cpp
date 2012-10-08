@@ -1,6 +1,4 @@
-// PhoneBook.cpp : 定义控制台应用程序的入口点。
-//说明：本工程有两个函数查找带？和*的内容，来源于互联网
-//
+// PhoneBook.cpp : 
 #include "stdio.h"
 #include "tchar.h"
 #include "iostream"
@@ -53,11 +51,6 @@ typedef struct __LINKMAN_T__
 static void show_linkman_title();
 static void show_linkman(int num, linkman *lm_item);
 
-//-->来自互联网（开始）
-//功  能：在lpszSour中查找字符串lpszFind，lpszFind中可以包含通配字符‘?’
-//参  数：nStart为在lpszSour中的起始查找位置
-//返回值：成功返回匹配位置，否则返回-1
-//注  意：Called by “bool MatchingString()”
 int FindingString(const char* lpszSour, const char* lpszFind, int nStart /* = 0 */)
 {
 //	ASSERT(lpszSour && lpszFind && nStart >= 0);
@@ -73,9 +66,8 @@ int FindingString(const char* lpszSour, const char* lpszFind, int nStart /* = 0 
 	if(n == 0)
 		return nStart;
 
-//KMP算法
+
 	int* next = new int[n];
-	//得到查找字符串的next数组
 	{	n--;
 
 		int j, k;
@@ -115,15 +107,7 @@ int FindingString(const char* lpszSour, const char* lpszFind, int nStart /* = 0 
 		return -1;
 }
 
-//功	  能：带通配符的字符串匹配
-//参	  数：lpszSour是一个普通字符串；
-//			  lpszMatch是一可以包含通配符的字符串；
-//			  bMatchCase为0，不区分大小写，否则区分大小写。
-//返  回  值：匹配，返回1；否则返回0。
-//通配符意义：
-//		‘*’	代表任意字符串，包括空字符串；
-//		‘?’	代表任意一个字符，不能为空；
-//时	  间：	2001.11.02	13:00
+
 bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase /*  = true */)
 {
 //	ASSERT(AfxIsValidString(lpszSour) && AfxIsValidString(lpszMatch));
@@ -140,16 +124,16 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 
 	int i = 0, j = 0;
 
-	//生成比较用临时源字符串'szSource'
+	
 	char* szSource =
 		new char[ (j = strlen(lpszSour)+1) ];
 
 	if( bMatchCase )
-	{	//memcpy(szSource, lpszSour, j);
+	{	
 		while( *(szSource+i) = *(lpszSour+i++) );
 	}
 	else
-	{	//Lowercase 'lpszSour' to 'szSource'
+	{	
 		i = 0;
 		while(lpszSour[i])
 		{	if(lpszSour[i] >= 'A' && lpszSour[i] <= 'Z')
@@ -162,10 +146,10 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 		szSource[i] = 0;
 	}
 
-	//生成比较用临时匹配字符串'szMatcher'
+	
 	char* szMatcher = new char[strlen(lpszMatch)+1];
 
-	//把lpszMatch里面连续的“*”并成一个“*”后复制到szMatcher中
+	
 	i = j = 0;
 	while(lpszMatch[i])
 	{
@@ -183,7 +167,7 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 	}
 	szMatcher[j] = 0;
 
-	//开始进行匹配检查
+	//star check
 
 	int nMatchOffset, nSourOffset;
 
@@ -194,13 +178,13 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 		if(szMatcher[nMatchOffset] == '*')
 		{
 			if(szMatcher[nMatchOffset+1] == 0)
-			{	//szMatcher[nMatchOffset]是最后一个字符
+			{	
 
 				bIsMatched = true;
 				break;
 			}
 			else
-			{	//szMatcher[nMatchOffset+1]只能是'?'或普通字符
+			{
 
 				int nSubOffset = nMatchOffset+1;
 
@@ -212,17 +196,17 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 
 				if( strlen(szSource+nSourOffset) <
 						size_t(nSubOffset-nMatchOffset-1) )
-				{	//源字符串剩下的长度小于匹配串剩下要求长度
-					bIsMatched = false; //判定不匹配
-					break;			//退出
+				{	
+					bIsMatched = false; 
+					break;			
 				}
 
 				if(!szMatcher[nSubOffset])//nSubOffset is point to ender of 'szMatcher'
-				{	//检查剩下部分字符是否一一匹配
+				{	
 
 					nSubOffset--;
 					int nTempSourOffset = strlen(szSource)-1;
-					//从后向前进行匹配
+					
 					while(szMatcher[nSubOffset] != '*')
 					{
 						if(szMatcher[nSubOffset] == '?')
@@ -238,7 +222,7 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 					}
 					break;
 				}
-				else//szMatcher[nSubOffset] == '*'
+				else
 				{	nSubOffset -= nMatchOffset;
 
 					char* szTempFinder = new char[nSubOffset];
@@ -249,7 +233,7 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 					int nPos = ::FindingString(szSource+nSourOffset, szTempFinder, 0);
 					delete []szTempFinder;
 
-					if(nPos != -1)//在'szSource+nSourOffset'中找到szTempFinder
+					if(nPos != -1)//find szTempFinder from 'szSource+nSourOffset'
 					{	nMatchOffset += nSubOffset;
 						nSourOffset += (nPos+nSubOffset-1);
 					}
@@ -267,15 +251,14 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 				break;
 			}
 			if(!szMatcher[nMatchOffset+1] && szSource[nSourOffset+1])
-			{	//如果szMatcher[nMatchOffset]是最后一个字符，
-				//且szSource[nSourOffset]不是最后一个字符
+			{	
 				bIsMatched = false;
 				break;
 			}
 			nMatchOffset++;
 			nSourOffset++;
 		}
-		else//szMatcher[nMatchOffset]为常规字符
+		else
 		{
 			if(szSource[nSourOffset] != szMatcher[nMatchOffset])
 			{	bIsMatched = false;
@@ -294,7 +277,7 @@ bool MatchingString(const char* lpszSour, const char* lpszMatch, bool bMatchCase
 	delete []szMatcher;
 	return bIsMatched;
 }
-//<--来自互联网（结束）
+
 
 /*check the match_context is match source_context or not. eg. 
 source_context        match_context   match
